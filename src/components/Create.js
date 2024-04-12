@@ -1,43 +1,43 @@
 import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import array from "./array";
-import { v4 as uuid } from "uuid";
+// import array from "./array";
+// import { v4 as uuid } from "uuid";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
  
 function Create() {
-    
     const [name, setname] = useState("");
     const [age, setage] = useState("");
     const [mobile, setmobile] = useState("");
     const [address, setaddress] = useState("");
     const [email, setemail] = useState("");
     
+   
     let history = useNavigate();
- 
+    const header= {"Access-Control-Allow-Origin": "*"};
     
     const handelSubmit = (event) => {
         event.preventDefault(); 
- 
-        const ids = uuid(); // Creating unique id
-        let uni = ids.slice(0, 8); // Slicing unique id
- 
-       
-        let a = name,
-            b = age,
-            c = mobile,
-            d = address,
-            e = email;
-        if (name == "" || age == "" || mobile == "" || address == "" || email == "") {
-            alert("invalid input");
-            return;
-        }
-        array.push({ id: uni, Name: a, Age: b , Mobile: c, Address:d, email:e});
- 
-        // Redirecting to home page after creation done
-        history("/");
+        let mlength=mobile.length;
+        if(name == "" || age=="" || mobile=="" ||  address=="" || email==""){
+            alert("enter values");
+        }else if(mlength!==10){
+            alert("enter valid number");
+        }else{
+        axios.post("https://66133b2a53b0d5d80f66fc45.mockapi.io/api/v1/array", {
+            name:name,
+            age:age,
+            mobile:mobile,
+            address:address,
+            email:email,
+            header,
+        })
+        .then(() => {
+            history("/home");
+        });
+    }
     };
- 
     return (
         <div>
             <Form
@@ -75,20 +75,21 @@ function Create() {
                 </Form.Group>
                 <Form.Group
                     className="mb-3"
-                    controlId="formBasicAge"
+                    controlId="formBasicMobile"
                 >
                     <Form.Control
+                     type="number"
+                     placeholder="Mobile"
+                     required
                         onChange={(e) =>
                             setmobile(e.target.value)
                         }
-                        type="number"
-                        placeholder="Mobile"
-                        required
+                       
                     />
                 </Form.Group>
                 <Form.Group
                     className="mb-3"
-                    controlId="formBasicAge"
+                    controlId="formBasicAddress"
                 >
                     <Form.Control
                         onChange={(e) =>
@@ -101,7 +102,7 @@ function Create() {
                 </Form.Group>
                 <Form.Group
                     className="mb-3"
-                    controlId="formBasicName"
+                    controlId="formBasicEmail"
                 >
                     <Form.Control
                         onChange={(e) =>
@@ -122,9 +123,9 @@ function Create() {
                 </Button>
  
                 {/* Redirecting back to home page */}
-                <Link className="d-grid gap-2" to="/">
+                <Link className="d-grid gap-2" to="/home">
                     <Button variant="info" size="lg">
-                        Home
+                        Back
                     </Button>
                 </Link>
             </Form>

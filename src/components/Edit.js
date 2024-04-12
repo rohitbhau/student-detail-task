@@ -1,62 +1,56 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import array from "./array";
+// import array from "./array";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import axios from "axios"
  
 function Edit() {
-    
+    const [id, setid] = useState("");
     const [name, setname] = useState("");
     const [age, setage] = useState("");
     const [mobile, setmobile] = useState("");
     const [address, setaddress] = useState("");
     const [email, setemail] = useState("");
-    const [id, setid] = useState("");
  
-   
     let history = useNavigate();
+
+   useEffect(() => {
+    setid(localStorage.getItem("id"));
+    setname(localStorage.getItem("name"));
+    setage(localStorage.getItem("age"));
+    setmobile(localStorage.getItem("mobile"));
+    setaddress(localStorage.getItem("address"));
+    setemail(localStorage.getItem("email"));
+   }, []);
+    
  
-    // Getting an index of an entry with an id
-    let index = array
-        .map(function (e) {
-            return e.id;
-        })
-        .indexOf(id);
- 
-    // Function for handling the edit and
-    // pushing changes of editing/updating
-    const handelSubmit = (e) => {
+
+    const handleUpdate = (e) => {
         e.preventDefault();
-        if (name == "" || age == "" || mobile == "" || address == "" || email == "") {
-            alert("invalid input");
-            return;
+        let mlength=mobile.length;
+        if(name == "" || age=="" || mobile=="" ||  address=="" || email==""){
+            alert("enter values");
+        }else if(mlength!==10){
+            alert("enter valid number");
+        }else{
+       axios.put('https://66133b2a53b0d5d80f66fc45.mockapi.io/api/v1/array/'+id
+    ,{
+        name:name,
+        age:age,
+        mobile:mobile,
+        address:address,
+        email:email,
+    }).then(() => {
+        history("/home");
+    });
         }
- 
-        // Getting an index of an array
-        let a = array[index];
- 
-      
-        a.Name = name;
-        a.Age = age;
-        a.Mobile = mobile;
-        a.Address = address;
-        a.Email = email;
-       
- 
-        // Redirecting to main page
-        history("/");
+
     };
  
   
-    useEffect(() => {
-        setname(localStorage.getItem("Name"));
-        setage(localStorage.getItem("Age"));
-        setmobile(localStorage.getItem("Mobile"));
-        setaddress(localStorage.getItem("Address"));
-        setemail(localStorage.getItem("Email"));
-        setid(localStorage.getItem("id"));
-    }, []);
+   
  
     return (
         <div>
@@ -134,7 +128,7 @@ function Edit() {
                 </Form.Group>
                 
                 <Button
-                    onClick={(e) => handelSubmit(e)}
+                    onClick={handleUpdate}
                     variant="primary"
                     type="submit"
                     size="lg"
@@ -143,9 +137,9 @@ function Edit() {
                 </Button>
  
                 {/* Redirecting to main page after editing */}
-                <Link className="d-grid gap-2" to="/">
+                <Link className="d-grid gap-2" to="/home">
                     <Button variant="warning" size="lg">
-                        Home
+                        Back
                     </Button>
                 </Link>
             </Form>
